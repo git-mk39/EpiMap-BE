@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import epimap from "./api/epimap.route.js";
 
 const app = express();
 app.use(cors());
