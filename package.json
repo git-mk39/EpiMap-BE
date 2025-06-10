@@ -21,9 +21,14 @@
   "homepage": "https://github.com/git-mk39/EpiMap-BE#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mongodb": "^6.17.0",
+    "mongoose": "^8.15.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.31",
     "nodemon": "^3.1.10"
   }
 }
