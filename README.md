@@ -11,5 +11,5 @@ Thay \<username\> & \<password\> theo user đã tạo trên MongoDB Atlas
 
 2. Chạy backend
 ```
-nodemon index.js
+npm run dev
 ```
