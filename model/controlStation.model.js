@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const ControlStationSchema = new Schema({
-  STT: { type: Number, required: true },
   Name: { type: String, required: true },
   Location: { type: String, required: true },
   Trajectory: {

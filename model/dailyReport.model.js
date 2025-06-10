@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const DailyReportSchema = new Schema({
-  STT: { type: Number, required: true },
   Province: { type: String, required: true },
   TotalInfections: { type: Number, required: true },
   DailyInfection: {
