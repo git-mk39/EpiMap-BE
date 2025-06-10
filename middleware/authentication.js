@@ -1,6 +1,5 @@
 import { verifytoken } from "../helper/token.js";
 
-// Middleware xác thực người dùng
 const authenticate = async (req, res, next) => {
   try {
     const token = req.cookies.token;
@@ -25,6 +24,8 @@ const authenticate = async (req, res, next) => {
     res.status(500).json({ msg: "Lỗi máy chủ khi xác thực." });
   }
 };
+
+// Middleware phân quyền theo role
 const authorizeRoles = (...roles) => {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
@@ -34,4 +35,31 @@ const authorizeRoles = (...roles) => {
   };
 };
 
-export { authenticate, authorizeRoles };
+// Middleware: Cho phép truy cập nếu là admin hoặc chưa đăng nhập
+const allowGuestOrAdmin = (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+
+    // Nếu không có token → là khách → cho phép
+    if (!token) {
+      return next();
+    }
+
+    const result = verifytoken(token);
+    if (result && result.role === "admin") {
+      req.user = {
+        userId: result.userId,
+        role: result.role,
+      };
+      return next();
+    }
+
+    return res
+      .status(403)
+      .json({ msg: "Chỉ admin hoặc khách mới được truy cập." });
+  } catch (err) {
+    return res.status(403).json({ msg: "Token không hợp lệ." });
+  }
+};
+
+export { authenticate, authorizeRoles, allowGuestOrAdmin };
