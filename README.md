@@ -6,6 +6,7 @@
 ```
 DB_URI=mongodb+srv://<username>:<password>@quanlydichbenh.3rdgyln.mongodb.net/?retryWrites=true&w=majority&appName=QuanLyDichBenh
 PORT=5000
+JWT_SECRET=<key>
 ```
 Thay \<username\> & \<password\> theo user đã tạo trên MongoDB Atlas
 
