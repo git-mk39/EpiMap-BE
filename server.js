@@ -12,6 +12,8 @@ app.use(express.json());
 
 webInitRouterUser(app);
 webInitRouterAdmin(app);
+app.use("/", epimap);
+
 
 app.use((req, res) => {
   res.status(404).json({ error: "not found" });
