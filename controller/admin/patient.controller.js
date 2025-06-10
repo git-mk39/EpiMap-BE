@@ -1,5 +1,5 @@
 import PatientInfo from "../../model/patientInfo.model.js";
-
+import { ObjectId } from "mongodb";
 // Thêm mới bệnh nhân
 const addPatient = async (req, res) => {
   console.log("đang thêm ca mới");
@@ -12,7 +12,7 @@ const addPatient = async (req, res) => {
   }
 };
 
-// Lấy danh sách bệnh nhân, có lọc
+// get bệnh nhân, search
 const getPatients = async (req, res) => {
   try {
     const { page = 1, searchValue, medicalCondition, typeDisease } = req.query;
@@ -21,13 +21,7 @@ const getPatients = async (req, res) => {
 
     if (searchValue) {
       const value = searchValue.trim();
-      if (!isNaN(value)) {
-        // Nếu là số → tìm theo PatientId
-        query.PatientId = Number(value);
-      } else {
-        // Nếu là chữ → tìm theo tên (Patient)
-        query.Patient = { $regex: value, $options: "i" };
-      }
+      query.Patient = { $regex: value, $options: "i" };
     }
 
     if (medicalCondition) {
@@ -38,7 +32,7 @@ const getPatients = async (req, res) => {
       query.Type = typeDisease;
     }
 
-    const limit = 15;
+    const limit = 20;
     const skip = (page - 1) * limit;
 
     const total = await PatientInfo.countDocuments(query);
@@ -66,7 +60,7 @@ const deletePatientsByIds = async (req, res) => {
     if (!Array.isArray(ids) || ids.length === 0) {
       return res.status(400).json({ msg: "Danh sách ID không hợp lệ" });
     }
-    const result = await PatientInfo.deleteMany({ PatientId: { $in: ids } });
+    const result = await PatientInfo.deleteMany({ _id: { $in: ids } });
 
     res.status(200).json({
       success: true,
@@ -85,13 +79,13 @@ const updatePatient = async (req, res) => {
     if (!patientId) {
       return res.status(400).json({ msg: "Thiếu patientId trong query" });
     }
-    const patient = await PatientInfo.findOne({ PatientId: Number(patientId) });
+    const patient = await PatientInfo.findOne({ _id: patientId });
 
     if (!patient) {
       return res.status(404).json({ msg: "Không tìm thấy bệnh nhân" });
     }
     const updatedPatient = await PatientInfo.findOneAndUpdate(
-      { PatientId: Number(patientId) },
+      { _id: new ObjectId(patientId) },
       { $set: req.body },
       { new: true }
     );

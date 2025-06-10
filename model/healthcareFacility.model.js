@@ -2,32 +2,31 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const HealthcareFacilitySchema = new Schema({
-  facilityId: { type: Number, required: true },
-  ten: {
+  name: {
     type: String,
     required: true,
   },
-  muc_dich: {
+  purpose: {
     type: String,
     required: true,
   },
-  chuc_nang: {
+  function: {
     type: String,
     required: true,
   },
-  toa_do: {
+  coordinates: {
     type: [Number],
     required: true,
   },
-  vi_tri: {
+  location: {
     type: String,
     required: true,
   },
-  quy_mo: {
+  capacity: {
     type: Number,
     required: true,
   },
-  tinh: {
+  province: {
     type: String,
     required: true,
   },
