@@ -1,3 +1,4 @@
+import { allowGuestOrAdmin } from "../../middleware/authentication.js";
 import authoRouter from "./autho.router.js";
 
 function webInitRouterUser(app) {

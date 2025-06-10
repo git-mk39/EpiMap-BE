@@ -31,13 +31,14 @@ const HealthcareFacilitySchema = new Schema({
     type: String,
     required: true,
   },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  // createdAt: { type: Date, default: Date.now },
+  // updatedAt: { type: Date, default: Date.now },
 });
 
 const HealthcareFacility = mongoose.model(
   "HealthcareFacility",
-  HealthcareFacilitySchema
+  HealthcareFacilitySchema,
+  "HealthcareFacility"
 );
 
 export default HealthcareFacility;

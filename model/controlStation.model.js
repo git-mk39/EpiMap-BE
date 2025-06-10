@@ -25,9 +25,13 @@ const ControlStationSchema = new Schema({
     type: String,
     required: true,
   },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  // createdAt: { type: Date, default: Date.now },
+  // updatedAt: { type: Date, default: Date.now },
 });
 
-const ControlStation = mongoose.model("ControlStation", ControlStationSchema);
+const ControlStation = mongoose.model(
+  "ControlStation",
+  ControlStationSchema,
+  "ControlStation"
+);
 export default ControlStation;

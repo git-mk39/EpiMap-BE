@@ -1,10 +1,13 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser"; // ✅
 import webInitRouterAdmin from "./routes/admin/admin.router.js";
 import webInitRouterUser from "./routes/user/user.router.js";
 
 const app = express();
-app.use(cors());
+
+app.use(cors({ credentials: true, origin: "http://localhost:5713" }));
+app.use(cookieParser());
 app.use(express.json());
 
 webInitRouterUser(app);

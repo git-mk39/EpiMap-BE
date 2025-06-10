@@ -30,8 +30,12 @@ const DailyReportSchema = new Schema({
     required: true,
   },
   Date: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  // updatedAt: { type: Date, default: Date.now },
 });
 
-const DailyReport = mongoose.model("DailyReport", DailyReportSchema);
+const DailyReport = mongoose.model(
+  "DailyReport",
+  DailyReportSchema,
+  "DailyReport"
+);
 export default DailyReport;

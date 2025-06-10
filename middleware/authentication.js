@@ -3,7 +3,6 @@ import { verifytoken } from "../helper/token.js";
 const authenticate = async (req, res, next) => {
   try {
     const token = req.cookies.token;
-
     if (!token) {
       return res.status(401).json({ msg: "Chưa đăng nhập. Không có token." });
     }
@@ -17,7 +16,6 @@ const authenticate = async (req, res, next) => {
       userId: result.userId,
       role: result.role,
     };
-
     next();
   } catch (err) {
     console.error(err);
@@ -25,9 +23,9 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-// Middleware phân quyền theo role
-const authorizeRoles = (...roles) => {
+const authorizeRoles = (roles) => {
   return (req, res, next) => {
+    console.log("role: ", req.user.role);
     if (!req.user || !roles.includes(req.user.role)) {
       return res.status(403).json({ msg: "Không có quyền truy cập." });
     }
@@ -35,15 +33,10 @@ const authorizeRoles = (...roles) => {
   };
 };
 
-// Middleware: Cho phép truy cập nếu là admin hoặc chưa đăng nhập
 const allowGuestOrAdmin = (req, res, next) => {
   try {
     const token = req.cookies.token;
-
-    // Nếu không có token → là khách → cho phép
-    if (!token) {
-      return next();
-    }
+    if (!token) return next();
 
     const result = verifytoken(token);
     if (result && result.role === "admin") {
@@ -56,7 +49,7 @@ const allowGuestOrAdmin = (req, res, next) => {
 
     return res
       .status(403)
-      .json({ msg: "Chỉ admin hoặc khách mới được truy cập." });
+      .json({ msg: "Chỉ admin hoặc khách chưa đăng nhập mới được truy cập." });
   } catch (err) {
     return res.status(403).json({ msg: "Token không hợp lệ." });
   }

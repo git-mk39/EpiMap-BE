@@ -16,7 +16,7 @@ const PatientInfoSchema = new Schema({
     required: true,
   },
   Province: {
-    type: [Number],
+    type: String,
     required: true,
   },
   Status: {
@@ -32,10 +32,14 @@ const PatientInfoSchema = new Schema({
     required: true,
   },
   Date: { type: Date },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  // createdAt: { type: Date, default: Date.now },
+  // updatedAt: { type: Date, default: Date.now },
 });
 
-export const PatientInfo = mongoose.model("PatientInfo", PatientInfoSchema);
+export const PatientInfo = mongoose.model(
+  "PatientInfo",
+  PatientInfoSchema,
+  "PatientInfo"
+);
 
 export default PatientInfo;

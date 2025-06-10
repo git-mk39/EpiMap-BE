@@ -1,7 +1,6 @@
 // Import libraries
 import crypto from "crypto";
 import { base64Url, base64UrlDecode } from "./base64Url.js";
-import Account from "../model/admin.model.js";
 function createToken(user) {
   // Create token
   const jwtSecret = process.env.JWT_SECRET;
@@ -12,12 +11,12 @@ function createToken(user) {
   };
 
   const payload = {
-    role: Account.role,
-    userId: Account._id,
-    username: Account.username,
-    gender: Account.gender,
-    name: Account.name,
-    exp: Date.now() + 60 * 60 * 1000,
+    role: user.role,
+    userId: user._id,
+    username: user.username,
+    gender: user.gender,
+    name: user.name,
+    exp: Date.now() + 24 * 60 * 60 * 1000,
   };
 
   console.log(JSON.stringify(header));
