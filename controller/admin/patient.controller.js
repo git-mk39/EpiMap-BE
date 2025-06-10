@@ -59,4 +59,53 @@ const getPatients = async (req, res) => {
   }
 };
 
-export { getPatients, addPatient };
+const deletePatientsByIds = async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ msg: "Danh sách ID không hợp lệ" });
+    }
+    const result = await PatientInfo.deleteMany({ PatientId: { $in: ids } });
+
+    res.status(200).json({
+      success: true,
+      deletedCount: result.deletedCount,
+      msg: `Đã xóa ${result.deletedCount} bệnh nhân`,
+    });
+  } catch (err) {
+    res.status(500).json({ msg: "Lỗi khi xóa bệnh nhân", error: err.message });
+  }
+};
+
+const updatePatient = async (req, res) => {
+  try {
+    const { patientId } = req.query;
+
+    if (!patientId) {
+      return res.status(400).json({ msg: "Thiếu patientId trong query" });
+    }
+    const patient = await PatientInfo.findOne({ PatientId: Number(patientId) });
+
+    if (!patient) {
+      return res.status(404).json({ msg: "Không tìm thấy bệnh nhân" });
+    }
+    const updatedPatient = await PatientInfo.findOneAndUpdate(
+      { PatientId: Number(patientId) },
+      { $set: req.body },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      msg: "Cập nhật bệnh nhân thành công",
+      data: updatedPatient,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Lỗi khi cập nhật bệnh nhân",
+      error: error.message,
+    });
+  }
+};
+
+export { getPatients, addPatient, deletePatientsByIds, updatePatient };

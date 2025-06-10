@@ -7,6 +7,6 @@ const authoRouter = express.Router();
 authoRouter.post("/signin", signIn);
 
 // logout
-authoRouter.get("/logout", signOut);
+authoRouter.post("/logout", signOut);
 
 export default authoRouter;
