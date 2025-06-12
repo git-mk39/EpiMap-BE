@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser"; // ✅
 import webInitRouterAdmin from "./routes/admin/admin.router.js";
 import webInitRouterUser from "./routes/user/user.router.js";
-
+import epimap from "./api/epimap.route.js"
 const app = express();
 
 app.use(cors({ credentials: true, origin: "http://localhost:5713" }));
