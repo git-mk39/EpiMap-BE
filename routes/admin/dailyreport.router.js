@@ -1,8 +1,8 @@
 import express from "express";
-import { getDataDailyReportPage } from "../../controller/admin/dailyreport.controller.js";
+import getDailyReports  from "../../controller/admin/dailyreport.controller.js";
 
 const dailyReportRouter = express.Router();
 
-dailyReportRouter.post("/", getDataDailyReportPage);
+dailyReportRouter.get("/", getDailyReports);
 
 export default dailyReportRouter;

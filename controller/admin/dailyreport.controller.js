@@ -1,115 +1,49 @@
-import PatientInfo from "../../model/patientInfo.model.js";
+import PatientInfo from "../../model/patientInfo.model.js"; 
 import DailyReport from "../../model/dailyReport.model.js";
 
-const getDataDailyReportPage = async (req, res) => {
+export const getDailyReports = async (req, res) => {
   try {
-    const { fromDate, toDate, typeDisease, province, page = 1 } = req.body;
-    const query = {};
-    if (fromDate || toDate) {
-      query.Date = {};
-      if (fromDate) query.Date.$gte = new Date(fromDate);
-      if (toDate) query.Date.$lte = new Date(toDate);
+    const { province, type, date } = req.query;
+
+    const filter = {};
+
+    if (province) filter.Province = province;
+    if (type) filter.Type = type;
+    if (date) {
+      const parsedDate = new Date(`${date}T00:00:00.000Z`);
+      const nextDate = new Date(`${date}T00:00:00.000Z`);
+      nextDate.setUTCDate(parsedDate.getUTCDate() + 1);
+
+      filter.Date = {
+        $gte: parsedDate,
+        $lt: nextDate,
+      };
     }
+   
+    const reports = await DailyReport.find(filter).sort({ Date: -1 });
 
-    if (typeDisease) {
-      query.Type = typeDisease;
-    }
-
-    if (province && province.toLowerCase() !== "all") {
-      query.Province = province;
-    }
-
-    const limit = 20;
-    const skip = (Number(page) - 1) * limit;
-
-    const total = await PatientInfo.countDocuments(query);
-    const patients = await PatientInfo.find(query)
-      .skip(skip)
-      .limit(limit)
-      .sort({ Date: -1 });
-    let dailyReportResult;
-
-    const matchCondition = {};
-    if (fromDate || toDate) {
-      matchCondition.Date = {};
-      if (fromDate) matchCondition.Date.$gte = new Date(fromDate);
-      if (toDate) matchCondition.Date.$lte = new Date(toDate);
-    }
-
-    if (typeDisease) {
-      matchCondition.Type = typeDisease;
-    }
-
-    if (province && province.toLowerCase() !== "all") {
-      matchCondition.Province = province;
-
-      // Tổng gộp toàn bộ cho một tỉnh
-      const aggregation = await DailyReport.aggregate([
-        { $match: matchCondition },
-        {
-          $group: {
-            _id: null,
-            TotalInfections: { $sum: "$TotalInfections" },
-            DailyInfection: { $sum: "$DailyInfection" },
-            TotalTreatment: { $sum: "$TotalTreatment" },
-            TotalRecover: { $sum: "$TotalRecover" },
-            TotalDeath: { $sum: "$TotalDeath" },
-            DailyDeath: { $sum: "$DailyDeath" },
-          },
-        },
-        { $project: { _id: 0 } },
-      ]);
-
-      dailyReportResult = aggregation[0] || {};
-    } else {
-      // Gộp theo từng ngày toàn quốc
-      const aggregation = await DailyReport.aggregate([
-        { $match: matchCondition },
-        {
-          $group: {
-            _id: "$Date",
-            TotalInfections: { $sum: "$TotalInfections" },
-            DailyInfection: { $sum: "$DailyInfection" },
-            TotalTreatment: { $sum: "$TotalTreatment" },
-            TotalRecover: { $sum: "$TotalRecover" },
-            TotalDeath: { $sum: "$TotalDeath" },
-            DailyDeath: { $sum: "$DailyDeath" },
-          },
-        },
-        { $sort: { _id: 1 } },
-        {
-          $project: {
-            Date: "$_id",
-            _id: 0,
-            TotalInfections: 1,
-            DailyInfection: 1,
-            TotalTreatment: 1,
-            TotalRecover: 1,
-            TotalDeath: 1,
-            DailyDeath: 1,
-          },
-        },
-      ]);
-
-      dailyReportResult = aggregation;
-    }
+    // 👉 Tính tổng ca nhiễm mới và tử vong mới
+    const totalNewInfections = reports.reduce(
+      (sum, report) => sum + (report.DailyInfection || 0),
+      0
+    );
+    const totalNewDeaths = reports.reduce(
+      (sum, report) => sum + (report.DailyDeath || 0),
+      0
+    );
 
     res.status(200).json({
-      status: "success",
-      data: {
-        patients,
-        dailyReport: dailyReportResult,
-        currentPage: Number(page),
-        totalPages: Math.ceil(total / limit),
-        totalRecords: total,
-      },
+      totalNewInfections,
+      totalNewDeaths,
+      data: reports,
     });
-  } catch (err) {
+  } catch (error) {
+    console.error("Lỗi khi lấy báo cáo hàng ngày:", error.message);
     res.status(500).json({
-      status: "error",
-      msg: "Lỗi truy vấn bệnh nhân",
-      error: err.message,
+      message: "Lỗi server khi lấy báo cáo",
+      error: error.message,
     });
   }
 };
-export { getDataDailyReportPage };
+
+export default getDailyReports;
