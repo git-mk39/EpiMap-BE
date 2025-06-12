@@ -6,7 +6,7 @@ import webInitRouterUser from "./routes/user/user.router.js";
 import epimap from "./api/epimap.route.js"
 const app = express();
 
-app.use(cors({ credentials: true, origin: "http://localhost:5713" }));
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(cookieParser());
 app.use(express.json());
 
