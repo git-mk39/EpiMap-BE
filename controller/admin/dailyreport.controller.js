@@ -3,13 +3,22 @@ import DailyReport from "../../model/dailyReport.model.js";
 
 export const getDailyReports = async (req, res) => {
   try {
-    const { province, type, date } = req.query;
+    const { province, type, date, startDate, endDate } = req.query;
 
     const filter = {};
 
     if (province) filter.Province = province;
     if (type) filter.Type = type;
-    if (date) {
+    if (startDate && endDate) {
+      const from = new Date(`${startDate}T00:00:00.000Z`);
+      const to = new Date(`${endDate}T00:00:00.000Z`);
+      to.setUTCDate(to.getUTCDate() + 1); // để lấy luôn cả ngày endDate
+
+      filter.Date = {
+        $gte: from,
+        $lt: to,
+      };
+    } else if (date) {
       const parsedDate = new Date(`${date}T00:00:00.000Z`);
       const nextDate = new Date(`${date}T00:00:00.000Z`);
       nextDate.setUTCDate(parsedDate.getUTCDate() + 1);
