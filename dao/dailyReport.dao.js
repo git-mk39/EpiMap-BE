@@ -65,10 +65,14 @@ export const getTop5ByInfectionsLatestDate = async (type) => {
       },
       {
         _id: 0,
-        Province: 1,
         TotalInfections: 1,
+        TotalInfection: 1,
         DailyInfection: 1,
         TotalTreatment: 1,
+        TotalRecover: 1,
+        TotalRecovered: 1,
+        TotalDeath: 1,
+        DailyDeath: 1,
         Date: 1
       }
     )
