@@ -8,9 +8,11 @@ const qldbConnection = mongoose.connection.useDb('QLDB');
 const dailyReportSchema = new mongoose.Schema({
   Province: String,
   TotalInfections: Number,
+  TotalInfection: Number,
   DailyInfection: Number,
   TotalTreatment: Number,
   TotalRecover: Number,
+  TotalRecovered: Number,
   TotalDeath: Number,
   DailyDeath: Number,
   Date: Date,
