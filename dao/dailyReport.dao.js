@@ -45,3 +45,36 @@ export const getLatestReportByProvinceAndType = async (provinceName, type) => {
     .sort({ Date: -1 })
     .exec();
 };
+
+export const getTop5ByInfectionsLatestDate = async (type) => {
+  // Step 1: Find latest date for given type
+  const latestEntry = await DailyReport
+    .findOne({ Type: { $regex: `^${type}$`, $options: 'i' } })
+    .sort({ Date: -1 })
+    .select({ Date: 1 })
+    .exec();
+
+  if (!latestEntry) return [];
+
+  const latestDate = latestEntry.Date;
+
+  // Step 2: Get top 5 by TotalInfections for that type and date
+  return await DailyReport
+    .find(
+      {
+        Type: { $regex: `^${type}$`, $options: 'i' },
+        Date: latestDate
+      },
+      {
+        _id: 0,
+        Province: 1,
+        TotalInfections: 1,
+        DailyInfection: 1,
+        TotalTreatment: 1,
+        Date: 1
+      }
+    )
+    .sort({ TotalInfections: -1 })
+    .limit(5)
+    .exec();
+};
