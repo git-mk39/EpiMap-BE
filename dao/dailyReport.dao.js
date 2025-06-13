@@ -132,7 +132,7 @@ export const getNationalStats = async (type) => {
   return result[0] || null;
 };
 
-export const get10MostRecent = async (province, type) => {
+export const get10MostRecentByProvince = async (province, type) => {
   return await DailyReport
     .find({
       Province: { $regex: `^${province}$`, $options: 'i' },
@@ -142,6 +142,53 @@ export const get10MostRecent = async (province, type) => {
     .limit(10)
     .exec();
 };
+
+// dailyReport.dao.js
+export const get10MostRecentByEntireNation = async (type) => {
+  const result = await DailyReport.aggregate([
+    {
+      $match: {
+        Type: { $regex: `^${type}$`, $options: 'i' }
+      }
+    },
+    {
+      $sort: { Date: -1 }
+    },
+    {
+      $group: {
+        _id: "$Date",
+        TotalInfections: { $sum: "$TotalInfections" },
+        DailyInfection: { $sum: "$DailyInfection" },
+        TotalTreatment: { $sum: "$TotalTreatment" },
+        TotalRecover: { $sum: "$TotalRecover" },
+        TotalDeath: { $sum: "$TotalDeath" },
+        DailyDeath: { $sum: "$DailyDeath" }
+      }
+    },
+    {
+      $sort: { _id: -1 } // Sort by Date descending again
+    },
+    {
+      $limit: 10
+    },
+    {
+      $project: {
+        _id: 0,
+        Date: "$_id",
+        TotalInfections: 1,
+        DailyInfection: 1,
+        TotalTreatment: 1,
+        TotalRecover: 1,
+        TotalDeath: 1,
+        DailyDeath: 1
+      }
+    }
+  ]);
+
+  return result;
+};
+
+
 
 export const getAllUniqueTypes = async () => {
   return await DailyReport.distinct("Type");
