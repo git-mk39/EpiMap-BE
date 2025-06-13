@@ -142,3 +142,7 @@ export const get10MostRecent = async (province, type) => {
     .limit(10)
     .exec();
 };
+
+export const getAllUniqueTypes = async () => {
+  return await DailyReport.distinct("Type");
+};

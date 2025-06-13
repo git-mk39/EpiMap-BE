@@ -1,6 +1,6 @@
 // dailyReport.route.js
 import express from 'express';
-import { getLatestReportByProvinceAndType, getTop5ByInfectionsLatestDate, getNationalStats, get10MostRecent} from '../dao/dailyReport.dao.js';
+import { getLatestReportByProvinceAndType, getTop5ByInfectionsLatestDate, getNationalStats, get10MostRecent, getAllUniqueTypes} from '../dao/dailyReport.dao.js';
 
 const router = express.Router();
 
@@ -53,6 +53,15 @@ router.get('/report/recent/:province/:type', async (req, res) => {
     }
 
     res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error', details: err.message });
+  }
+});
+
+router.get('/report/types', async (req, res) => {
+  try {
+    const types = await getAllUniqueTypes();
+    res.json(types);
   } catch (err) {
     res.status(500).json({ error: 'Server error', details: err.message });
   }
