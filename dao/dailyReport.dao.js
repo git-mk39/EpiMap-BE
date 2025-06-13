@@ -65,6 +65,7 @@ export const getTop5ByInfectionsLatestDate = async (type) => {
       },
       {
         _id: 0,
+        Province: 1,
         TotalInfections: 1,
         TotalInfection: 1,
         DailyInfection: 1,
@@ -129,4 +130,15 @@ export const getNationalStats = async (type) => {
   ]);
 
   return result[0] || null;
+};
+
+export const get10MostRecent = async (province, type) => {
+  return await DailyReport
+    .find({
+      Province: { $regex: `^${province}$`, $options: 'i' },
+      Type: { $regex: `^${type}$`, $options: 'i' }
+    })
+    .sort({ Date: -1 })
+    .limit(10)
+    .exec();
 };
