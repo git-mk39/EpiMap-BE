@@ -80,3 +80,53 @@ export const getTop5ByInfectionsLatestDate = async (type) => {
     .limit(5)
     .exec();
 };
+
+export const getNationalStats = async (type) => {
+  const latestDateDoc = await DailyReport
+    .findOne({ Type: { $regex: `^${type}$`, $options: 'i' } })
+    .sort({ Date: -1 })
+    .select({ Date: 1 })
+    .exec();
+
+  if (!latestDateDoc) return null;
+
+  const latestDate = latestDateDoc.Date;
+
+  const result = await DailyReport.aggregate([
+    {
+      $match: {
+        Type: { $regex: `^${type}$`, $options: 'i' },
+        Date: latestDate
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        TotalInfections: { $sum: "$TotalInfections" },
+        TotalInfection: { $sum: "$TotalInfection" },
+        DailyInfection: { $sum: "$DailyInfection" },
+        TotalTreatment: { $sum: "$TotalTreatment" },
+        TotalRecovered: { $sum: "$TotalRecover" },
+        TotalRecover: { $sum: "$TotalRecover" },
+        TotalDeath: { $sum: "$TotalDeath" },
+        DailyDeath: { $sum: "$DailyDeath" }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        TotalInfections: 1,
+        TotalInfection: 1,
+        DailyInfection: 1,
+        TotalTreatment: 1,
+        TotalRecover: 1,
+        TotalRecovered: 1,
+        TotalDeath: 1,
+        DailyDeath: 1,
+        Date: latestDate
+      }
+    }
+  ]);
+
+  return result[0] || null;
+};
