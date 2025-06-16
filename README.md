@@ -12,6 +12,13 @@ JWT_SECRET=<key>
 ```
 Thay \<username\> & \<password\> theo user đã tạo trên MongoDB Atlas
 
+### Cài đặt
+
+```bash
+git clone https://github.com/git-mk39/EpiMap-BE.git
+cd EpiMap-BE
+npm install
+```
 
 ### Chạy ứng dụng
 ```
